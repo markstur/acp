@@ -10,7 +10,11 @@ python.uv_venv_auto = true
 [tasks."common:check:nwa"]
 dir = "{{config_root}}"
 run = """
+echo 'this is a test'
+echo $pwd
 nwa check -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --verbose
+echo $?
+echo 'end test'
 """
 outputs = { auto = true }
 
