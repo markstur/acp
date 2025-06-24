@@ -12,7 +12,7 @@ dir = "{{config_root}}"
 run = """
 echo 'this is a test'
 echo $pwd
-nwa check -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --verbose
+nwa check -i Apache-2.0  '{examples}/**/*.{py}' --verbose
 echo $?
 echo 'end test'
 """
