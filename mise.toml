@@ -7,6 +7,11 @@ uv = "0.6.16"
 experimental = true # for python.uv_venv_auto
 python.uv_venv_auto = true
 
+[tasks.check]
+run = """
+echo 'this is a test'
+"""
+
 [tasks."common:check:nwa"]
 dir = "{{config_root}}"
 run = """
