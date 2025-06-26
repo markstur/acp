@@ -1,23 +1,126 @@
 [tools]
+# Python
 python = "3.11"
-uv = "0.6.16"
+uv = "0.7.13"
+
+# Node.js
+nodejs = "22"
+pnpm = "latest"
+
+# Kubernetes
+helm = "latest"
+kubeconform = "latest"
+"ubi:telepresenceio/telepresence" = "latest"
+
+# Misc
+yq = "latest"
 "ubi:B1NARY-GR0UP/nwa" = "latest"
 
 [settings]
-experimental = true # for python.uv_venv_auto
+experimental = true
 python.uv_venv_auto = true
+raw = true
+node.gpg_verify = false # tends to randomly fail; sha is checked by lockfile
+
+[hooks]
+postinstall = "{{ mise_bin }} setup"
+
+# TASKS
+
+[task_config]
+includes = [
+    "helm/tasks.toml",
+    "apps/beeai-cli/tasks.toml",
+    "apps/beeai-server/tasks.toml",
+    "apps/beeai-ui/tasks.toml",
+    "apps/beeai-web/tasks.toml",
+    "docs/tasks.toml",
+]
+
+## grouped tasks
+
+[tasks."setup"]
+depends = ["setup:*"]
+
+[tasks."check"]
+depends = ["*:check"]
+
+[tasks."fix"]
+depends = ["*:fix"]
+
+[tasks."test"]
+depends = ["*:test"]
+
+## git hooks
+
+[tasks."git-hooks:pre-commit"]
+hide = true
+depends = ["check"]
+
+## repo setup
+
+[tasks."setup:mise-local-toml"]
+hide = true
+dir = "{{config_root}}"
+run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
+sources = ["mise.local.toml-example"]
+outputs = { auto = true }
+
+[tasks."setup:git-hooks"]
+hide = true
+dir = "{{config_root}}"
+run = """
+test ! -d .git || (printf '#!/bin/sh\n{{ mise_bin }} run git-hooks:pre-commit' >.git/hooks/pre-commit && chmod +x .git/hooks/pre-commit)
+"""
+sources = [".git/hooks/pre-commit"]
+outputs = { auto = true }
+
+[tasks."setup:pnpm"]
+hide = true
+dir = "{{config_root}}"
+run = "pnpm install"
+sources = ["pnpm-lock.yaml", "pnpm-workspace.yaml", "apps/*/package.json", "docs/package.json", "agents/*/*/package.json"]
+outputs = { auto = true }
+
+[tasks."setup:uv"]
+hide = true
+dir = "{{config_root}}"
+run = "uv sync --all-extras --dev"
+sources = ["uv.lock", "pyproject.toml", "apps/*/pyproject.toml"]
+outputs = { auto = true }
+
+## common tasks
+
+### check
+
+[tasks."common:check"]
+depends = ["common:check:*"]
 
 [tasks."common:check:nwa"]
 dir = "{{config_root}}"
-run = """
-nwa check -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}'
-"""
+run = "nwa check -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' 'apps/*/src/**/*.{py,js,jsx,ts,tsx,html,css,scss}'"
+# sources don't support {a,b} -- https://github.com/jdx/mise/discussions/4469
+sources = ["apps/*/src/**/*.py", "apps/*/src/**/*.js", "apps/*/src/**/*.jsx", "apps/*/src/**/*.ts", "apps/*/src/**/*.tsx", "apps/*/src/**/*.html", "apps/*/src/**/*.css", "apps/*/src/**/*.scss"]
 outputs = { auto = true }
+
+### fix
+
+[tasks."common:fix"]
+depends = ["common:fix:*"]
 
 [tasks."common:fix:nwa"]
 dir = "{{config_root}}"
 run = """
-nwa update -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --mute || true
-nwa add    -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --mute || true
+nwa update -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' 'apps/*/src/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --mute || true
+nwa add    -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' 'apps/*/src/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --mute || true
 """
+# sources don't support {a,b} -- https://github.com/jdx/mise/discussions/4469
+sources = ["apps/*/src/**/*.py", "apps/*/src/**/*.js", "apps/*/src/**/*.jsx", "apps/*/src/**/*.ts", "apps/*/src/**/*.tsx", "apps/*/src/**/*.html", "apps/*/src/**/*.css", "apps/*/src/**/*.scss"]
 outputs = { auto = true }
+
+### test
+
+# Empty tests in case there are no tests
+
+[tasks."common:test"]
+run = "true"

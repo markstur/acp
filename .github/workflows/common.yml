@@ -4,18 +4,18 @@ permissions:
   contents: read
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
+  push:
     branches:
       - main
 
 jobs:
-  check-license:
-    name: License
+  check:
+    name: Check & test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup
-      - run: mise task run --force common:check:nwa
+      - run: mise run --force setup
+      - run: mise run --force check
+      - run: mise run --force test
