@@ -28,12 +28,12 @@ run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
 sources = ["mise.local.toml-example"]
 outputs = { auto = true }
 
-[tasks."setup:uv"]
-hide = true
-dir = "{{config_root}}"
-run = "uv sync --all-extras --dev"
-sources = ["uv.lock", "pyproject.toml", "apps/*/pyproject.toml"]
-outputs = { auto = true }
+# [tasks."setup:uv"]
+# hide = true
+# dir = "{{config_root}}"
+# run = "uv sync --all-extras --dev"
+# sources = ["uv.lock", "pyproject.toml", "apps/*/pyproject.toml"]
+# outputs = { auto = true }
 
 ## common tasks
 
