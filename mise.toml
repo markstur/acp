@@ -7,10 +7,30 @@ uv = "0.6.16"
 experimental = true # for python.uv_venv_auto
 python.uv_venv_auto = true
 
-[tasks.check]
-run = """
-echo 'this is a test'
-"""
+
+## grouped tasks
+
+[tasks."setup"]
+depends = ["setup:*"]
+
+[tasks."check"]
+depends = ["*:check"]
+
+[tasks."fix"]
+depends = ["*:fix"]
+
+## repo setup
+
+[tasks."setup:mise-local-toml"]
+hide = true
+dir = "{{config_root}}"
+run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
+sources = ["mise.local.toml-example"]
+outputs = { auto = true }
+
+## common tasks
+
+### check
 
 [tasks."common:check:nwa"]
 dir = "{{config_root}}"
@@ -23,6 +43,8 @@ echo 'end test'
 """
 sources = ["examples/**/*.py"]
 outputs = { auto = true }
+
+### fix
 
 [tasks."common:fix:nwa"]
 dir = "{{config_root}}"
