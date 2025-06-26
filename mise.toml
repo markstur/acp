@@ -1,12 +1,12 @@
 [tools]
 python = "3.11"
-uv = "0.6.16"
+# uv = "0.6.16"
 "ubi:B1NARY-GR0UP/nwa" = "latest"
 
-[settings]
-experimental = true # for python.uv_venv_auto
-python.uv_venv_auto = true
-raw = true
+# [settings]
+# experimental = true # for python.uv_venv_auto
+# python.uv_venv_auto = true
+# raw = true
 
 ## grouped tasks
 
@@ -27,13 +27,6 @@ dir = "{{config_root}}"
 run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
 sources = ["mise.local.toml-example"]
 outputs = { auto = true }
-
-# [tasks."setup:uv"]
-# hide = true
-# dir = "{{config_root}}"
-# run = "uv sync --all-extras --dev"
-# sources = ["uv.lock", "pyproject.toml", "apps/*/pyproject.toml"]
-# outputs = { auto = true }
 
 ## common tasks
 
