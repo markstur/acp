@@ -19,9 +19,6 @@ depends = ["*:check"]
 [tasks."fix"]
 depends = ["*:fix"]
 
-[tasks."test"]
-depends = ["*:test"]
-
 ## repo setup
 
 [tasks."setup:mise-local-toml"]
@@ -66,10 +63,3 @@ nwa add    -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '*/src/**/*.
 # sources don't support {a,b} -- https://github.com/jdx/mise/discussions/4469
 sources = ["*/src/**/*.py", "*/src/**/*.js", "*/src/**/*.jsx", "*/src/**/*.ts", "*/src/**/*.tsx", "*/src/**/*.html", "*/src/**/*.css", "*/src/**/*.scss"]
 outputs = { auto = true }
-
-### test
-
-# Empty tests in case there are no tests
-
-[tasks."common:test"]
-run = "true"
