@@ -4,8 +4,8 @@ python = "3.11"
 
 ## grouped tasks
 
-[tasks."setup"]
-depends = ["setup:*"]
+# [tasks."setup"]
+# depends = ["setup:*"]
 
 [tasks."check"]
 depends = ["*:check"]
@@ -15,12 +15,12 @@ depends = ["*:fix"]
 
 ## repo setup
 
-[tasks."setup:mise-local-toml"]
-hide = true
-dir = "{{config_root}}"
-run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
-sources = ["mise.local.toml-example"]
-outputs = { auto = true }
+# [tasks."setup:mise-local-toml"]
+# hide = true
+# dir = "{{config_root}}"
+# run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
+# sources = ["mise.local.toml-example"]
+# outputs = { auto = true }
 
 ## common tasks
 
