@@ -21,6 +21,7 @@ nwa check -i Apache-2.0  '{examples}/**/*.{py}' --verbose
 echo $?
 echo 'end test'
 """
+sources = ["examples/**/*.py"]
 outputs = { auto = true }
 
 [tasks."common:fix:nwa"]
