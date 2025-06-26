@@ -1,0 +1,55 @@
+[tools]
+python = "3.11"
+uv = "0.6.16"
+"ubi:B1NARY-GR0UP/nwa" = "latest"
+
+[settings]
+experimental = true # for python.uv_venv_auto
+python.uv_venv_auto = true
+
+
+## grouped tasks
+
+[tasks."setup"]
+depends = ["setup:*"]
+
+[tasks."check"]
+depends = ["*:check"]
+
+[tasks."fix"]
+depends = ["*:fix"]
+
+## repo setup
+
+[tasks."setup:mise-local-toml"]
+hide = true
+dir = "{{config_root}}"
+run = "test -f mise.local.toml || cp mise.local.toml-example mise.local.toml"
+sources = ["mise.local.toml-example"]
+outputs = { auto = true }
+
+## common tasks
+
+### check
+
+[tasks."common:check:nwa"]
+dir = "{{config_root}}"
+run = """
+echo 'this is a test'
+echo $pwd
+nwa check -i Apache-2.0  '{examples}/**/*.{py}' --verbose
+echo $?
+echo 'end test'
+"""
+sources = ["examples/**/*.py"]
+outputs = { auto = true }
+
+### fix
+
+[tasks."common:fix:nwa"]
+dir = "{{config_root}}"
+run = """
+nwa update -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --mute || true
+nwa add    -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}' --mute || true
+"""
+outputs = { auto = true }

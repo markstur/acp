@@ -1,20 +1,38 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 from pydantic import BaseModel
 
-from acp_sdk.models.models import Agent, AgentName, AwaitResume, Message, Run, RunMode, SessionId
+from acp_sdk.models.models import (
+    AgentManifest,
+    AgentName,
+    AwaitResume,
+    Event,
+    Message,
+    Run,
+    RunMode,
+    Session,
+    SessionId,
+)
+
+
+class PingResponse(BaseModel):
+    pass
 
 
 class AgentsListResponse(BaseModel):
-    agents: list[Agent]
+    agents: list[AgentManifest]
 
 
-class AgentReadResponse(Agent):
+class AgentReadResponse(AgentManifest):
     pass
 
 
 class RunCreateRequest(BaseModel):
     agent_name: AgentName
     session_id: SessionId | None = None
-    inputs: list[Message]
+    session: Session | None = None
+    input: list[Message]
     mode: RunMode = RunMode.SYNC
 
 
@@ -36,4 +54,12 @@ class RunReadResponse(Run):
 
 
 class RunCancelResponse(Run):
+    pass
+
+
+class RunEventsListResponse(BaseModel):
+    events: list[Event]
+
+
+class SessionReadResponse(Session):
     pass

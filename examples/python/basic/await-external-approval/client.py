@@ -1,8 +1,10 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import asyncio
-from functools import reduce
 
 from acp_sdk.client import Client
-from acp_sdk.models import MessageAwaitResume, Message, MessagePart
+from acp_sdk.models import Message, MessageAwaitResume, MessagePart
 
 
 async def handle_resume(client, run_id):
@@ -13,7 +15,7 @@ async def handle_resume(client, run_id):
 
         if event.type == "run.completed":
             print()
-            print(str(event.run.outputs[-1]))
+            print(str(event.run.output[-1]))
 
 
 async def client():

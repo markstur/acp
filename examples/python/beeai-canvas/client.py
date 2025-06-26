@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import asyncio
 import base64
 import sys
@@ -14,7 +17,7 @@ async def run_client() -> None:
         async with Client(base_url="http://localhost:8000") as client, client.session():
             while True:
                 user_message = input(">>> ")
-                user_message_input = Message(parts=[MessagePart(content=user_message, role="user")])
+                user_message_input = Message(parts=[MessagePart(content=user_message)])
 
                 print("Assistant:", flush=True)
                 collected_artifacts = []

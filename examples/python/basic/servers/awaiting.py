@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 from collections.abc import AsyncGenerator
 
 from acp_sdk.models import (
@@ -13,7 +16,7 @@ server = Server()
 
 
 @server.agent()
-async def awaiting(inputs: list[Message], context: Context) -> AsyncGenerator[RunYield, RunYieldResume]:
+async def awaiting(input: list[Message], context: Context) -> AsyncGenerator[RunYield, RunYieldResume]:
     """Greets and awaits for more data"""
     yield MessagePart(content="Hello!")
     resume = yield MessageAwaitRequest(

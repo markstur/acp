@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 from collections.abc import Iterator
 from typing import Any
 
@@ -14,11 +17,11 @@ server = Server()
 
 
 @server.agent()
-def song_writer_agent(inputs: list[Message], context: Context) -> Iterator:
+def song_writer_agent(input: list[Message], context: Context) -> Iterator:
     """Agent that writes a song about a website. Accepts a message with URL"""
 
     try:
-        url = str(AnyUrl(str(inputs[-1])))
+        url = str(AnyUrl(str(input[-1])))
     except ValueError:
         yield MessagePart(content="This is not a URL, please provide valid website.")
         return
@@ -74,7 +77,7 @@ def song_writer_agent(inputs: list[Message], context: Context) -> Iterator:
         verbose=True,
         step_callback=step_callback,
     )
-    result = crew.kickoff(inputs={"url": url})
+    result = crew.kickoff(input={"url": url})
     yield MessagePart(content=result.raw)
 
 

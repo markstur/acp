@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import asyncio
 
 from acp_sdk.client import Client
@@ -12,7 +15,7 @@ async def client() -> None:
         run = await client.run_sync(
             agent="lang_graph_greeting_agent", input=[Message(parts=[MessagePart(content="Jon")])]
         )
-        print(run.outputs[0].parts[0].content)
+        print(run.output[0].parts[0].content)
 
 
 if __name__ == "__main__":

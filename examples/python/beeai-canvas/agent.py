@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import mimetypes
 import re
 from collections.abc import AsyncGenerator
@@ -46,7 +49,7 @@ server = Server()
 
 
 @server.agent()
-async def canvas_agent(inputs: list[Message], context: Context) -> AsyncGenerator:
+async def canvas_agent(input: list[Message], context: Context) -> AsyncGenerator:
     """
     An agent that processes user input and generates named artifacts based on the request.
     It instructs the LLM to create named markdown code blocks like:
@@ -58,13 +61,12 @@ async def canvas_agent(inputs: list[Message], context: Context) -> AsyncGenerato
 
     llm = ChatModel.from_name("ollama:gemma3:12b-it-qat")
 
-    response = await llm.create(messages=[
-        SystemMessage(SYSTEM_PROMPT),
-        *(
-            (UserMessage if getattr(message.parts[0], "role", None) == "user" else AssistantMessage)(str(message))
-            for message in inputs
-        ),
-    ])
+    response = await llm.create(
+        messages=[
+            SystemMessage(SYSTEM_PROMPT),
+            *((UserMessage if message.role == "user" else AssistantMessage)(str(message)) for message in input),
+        ]
+    )
     response_text = response.get_text_content()
 
     last_end = 0
