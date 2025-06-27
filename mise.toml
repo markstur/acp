@@ -24,7 +24,7 @@ depends = ["common:check:*"]
 
 [tasks."common:check:nwa"]
 dir = "{{config_root}}"
-run = "nwa check -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '{examples,{python,typescript}/src,python/tests,typescript/test}/**/*.{py,js,jsx,ts,tsx,html,css,scss}'"
+run = "nwa check -i Apache-2.0 -c '© BeeAI a Series of LF Projects, LLC' '*/src/**/*.{py,js,jsx,ts,tsx,html,css,scss}'"
 # sources don't support {a,b} -- https://github.com/jdx/mise/discussions/4469
 sources = ["*/src/**/*.py", "*/src/**/*.js", "*/src/**/*.jsx", "*/src/**/*.ts", "*/src/**/*.tsx", "*/src/**/*.html", "*/src/**/*.css", "*/src/**/*.scss"]
 outputs = { auto = true }
