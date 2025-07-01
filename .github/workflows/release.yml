@@ -7,10 +7,12 @@ on:
 permissions:
   contents: read
   id-token: write
+  pages: write
 
 jobs:
-  publish-pypi:
-    name: Upload release to PyPI
+  publish-python:
+    if: startsWith(github.ref, 'refs/tags/python_')
+    name: PyPI package
     runs-on: ubuntu-latest
     environment: release
     steps:
@@ -25,3 +27,58 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/
+
+  publish-typescript:
+    if: startsWith(github.ref, 'refs/tags/typescript_')
+    name: NPM package
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build acp-sdk package
+        run: pnpm --filter acp-sdk run --if-present build
+
+      - name: Publish packages
+        run: pnpm --filter acp-sdk publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  reference-python:
+    name: API Reference Python
+    needs: publish-python
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.6.12"
+      - name: Install dependencies
+        run: uv sync --all-extras
+      - name: Build documentation
+        working-directory: docs/sdks/python
+        run: |
+          uv run make docs
+          touch build/.nojekyll
+      - name: Upload Documentation artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "docs/sdks/python/build"
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

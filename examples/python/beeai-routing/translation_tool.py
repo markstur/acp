@@ -1,15 +1,18 @@
-from pydantic import BaseModel, Field
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 from enum import Enum
 
 from acp_sdk import Message
 from acp_sdk.client import Client
 from acp_sdk.models import MessagePart
-from beeai_framework.tools.tool import Tool
-from beeai_framework.tools.types import ToolRunOptions
 from beeai_framework.context import RunContext
 from beeai_framework.emitter import Emitter
 from beeai_framework.tools import ToolOutput
+from beeai_framework.tools.tool import Tool
+from beeai_framework.tools.types import ToolRunOptions
 from beeai_framework.utils.strings import to_json
+from pydantic import BaseModel, Field
 
 
 async def run_agent(agent: str, input: str) -> list[Message]:
@@ -18,7 +21,7 @@ async def run_agent(agent: str, input: str) -> list[Message]:
             agent=agent, input=[Message(parts=[MessagePart(content=input, content_type="text/plain")])]
         )
 
-    return run.outputs
+    return run.output
 
 
 class Language(str, Enum):

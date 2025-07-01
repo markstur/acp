@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import asyncio
 import sys
 from contextlib import suppress
@@ -12,7 +15,7 @@ async def run_client() -> None:
         async with Client(base_url="http://localhost:8000") as client, client.session() as session:
             while True:
                 user_message = input(">>> ")
-                user_message_input = Message(parts=[MessagePart(content=user_message, role="user")])
+                user_message_input = Message(parts=[MessagePart(content=user_message)])
 
                 log_type = None
                 async for event in client.run_stream(agent="chat_agent", input=[user_message_input]):
