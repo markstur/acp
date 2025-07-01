@@ -5,15 +5,24 @@ description: "Learn how to build common composition patterns"
 
 ACP is designed to be agnostic regarding the internal implementation details of agents. It provides a standardized interface that facilitates communication between agents, enabling seamless composition.
 
-The protocol emphasizes the importance of patterns over frameworks, echoing sentiments expressed in Anthropic's [insightful article](https://www.anthropic.com/engineering/building-effective-agents).
+Rather than prescribing specific frameworks, ACP emphasizes patterns over frameworks, echoing sentiments expressed in Anthropic's [insightful article](https://www.anthropic.com/engineering/building-effective-agents) on building effective agents.
 
 Central to ACP's composability are its message structure and agent execution model. A consistent message format and the capability to invoke agents remotely are crucial for effective composition.
 
-Let's explore the implementation of some patterns using ACP.
+## When to Use Composition Patterns
+- Prompt Chaining: When you need sequential processing where each step builds on the previous output (writing → editing → translation).
+- Routing: When different request types need specialized handling (customer support routing to technical/billing/general agents).
+- Parallelization: When independent tasks can be processed simultaneously for faster results (generating multiple translations or analyses).
+- Hierarchical: When you need coordination between high-level planning and specialized execution agents.
 
-## Example: Prompt Chaining
+Let's explore the implementation of these patterns using ACP.
 
-<Tip>See the complete source code on [GitHub](https://github.com/i-am-bee/acp/tree/main/examples/python/beeai-prompt-chaining).</Tip>
+## Prompt Chaining Example
+
+<Tip>
+  See the complete source code on
+  [GitHub](https://github.com/i-am-bee/acp/tree/main/examples/python/beeai-prompt-chaining).
+</Tip>
 
 Using ACP, prompt chaining can be implemented easily by sequentially running multiple agents and combining their outputs.
 
@@ -37,33 +46,33 @@ async def run_agent(agent: str, input: str) -> list[Message]:
     async with Client(base_url="http://localhost:8000") as client:
         run = await client.run_sync(
             agent=agent,
-            inputs=[Message(parts=[MessagePart(content=input, content_type="text/plain")])]
+            input=[Message(parts=[MessagePart(content=input, content_type="text/plain")])]
         )
 
-    return run.outputs
+    return run.output
 
 @server.agent(name="translation")
-async def translation_agent(inputs: list[Message]) -> AsyncGenerator:
+async def translation_agent(input: list[Message]) -> AsyncGenerator:
     llm = ChatModel.from_name("ollama:llama3.1:8b")
 
     agent = ReActAgent(llm=llm, tools=[], memory=TokenMemory(llm))
-    response = await agent.run(prompt="Translate the given text to Spanish. The text is: " + str(inputs))
+    response = await agent.run(prompt="Translate the given text to Spanish. The text is: " + str(input))
 
     yield MessagePart(content=response.result.text)
 
-@server.agent(name="marketing_copy") 
-async def marketing_copy_agent(inputs: list[Message]) -> AsyncGenerator:
+@server.agent(name="marketing_copy")
+async def marketing_copy_agent(input: list[Message]) -> AsyncGenerator:
     llm = ChatModel.from_name("ollama:llama3.1:8b")
 
     agent = ReActAgent(llm=llm, tools=[], memory=TokenMemory(llm))
-    response = await agent.run(prompt="You are able to generate punchy headlines for a marketing campaign. Provide punchy headline to sell the specified product on users eshop. The product is: " + str(inputs))
+    response = await agent.run(prompt="You are able to generate punchy headlines for a marketing campaign. Provide punchy headline to sell the specified product on users eshop. The product is: " + str(input))
 
     yield MessagePart(content=response.result.text)
 
 
 @server.agent(name="assistant")
-async def main_agent(inputs: list[Message], context: Context) -> AsyncGenerator:
-    marketing_copy = await run_agent("marketing_copy", str(inputs))
+async def main_agent(input: list[Message], context: Context) -> AsyncGenerator:
+    marketing_copy = await run_agent("marketing_copy", str(input))
     translated_marketing_copy = await run_agent("translation", str(marketing_copy))
 
     yield MessagePart(content=str(marketing_copy[0]))
@@ -73,17 +82,21 @@ server.run()
 ```
 
 Key points:
+
 - While the example uses a single ACP server to expose multiple agents for simplicity, practical implementations may involve distributed architectures.
 - The `run_agent` function enables remote invocation of agents through ACP.
-- While the current example demonstrates agents that only accept and produce text, practical implementations may include more sophisticated use cases involving various types of artifacts.
+- While the current example demonstrates agents that only accept and produce text, practical implementations may include more sophisticated use cases involving various types of [artifacts](/core-concepts/message-structure#artifacts).
 
-## Example: Routing
+## Intelligent Routing Example
 
-<Tip>See the complete source code on [GitHub](https://github.com/i-am-bee/acp/tree/main/examples/python/beeai-routing).</Tip>
+<Tip>
+  See the complete source code on
+  [GitHub](https://github.com/i-am-bee/acp/tree/main/examples/python/beeai-routing).
+</Tip>
 
-Routing is a concept where a router (often an LLM) determines which agent should handle a particular request.
+Routing enables dynamic agent selection based on request content. A router agent analyzes incoming requests and forwards them to the most appropriate specialist agent.
 
-The following example illustrates routing by exposing ACP agents as tools to a router agent. The router agent evaluates the original request and forwards it to the appropriate agent based on its assessment.
+The following example exposes ACP agents as tools to a router agent. The router agent evaluates the original request and forwards it to the appropriate agent based on its assessment.
 
 <CodeGroup>
 ```python agent.py
@@ -101,28 +114,28 @@ from translation_tool import TranslationTool
 server = Server()
 
 @server.agent(name="translation_spanish")
-async def translation_spanish_agent(inputs: list[Message]) -> AsyncGenerator:
-    llm = ChatModel.from_name("ollama:llama3.1:8b")
-    print("Translation Spanish agent")
+async def translation_spanish_agent(input: list[Message]) -> AsyncGenerator:
+llm = ChatModel.from_name("ollama:llama3.1:8b")
+print("Translation Spanish agent")
 
     agent = ReActAgent(llm=llm, tools=[], memory=TokenMemory(llm))
-    response = await agent.run(prompt="Translate the given text to Spanish. The text is: " + str(inputs))
+    response = await agent.run(prompt="Translate the given text to Spanish. The text is: " + str(input))
 
     yield MessagePart(content=response.result.text)
 
 @server.agent(name="translation_french")
-async def translation_french_agent(inputs: list[Message]) -> AsyncGenerator:
-    llm = ChatModel.from_name("ollama:llama3.1:8b")
+async def translation_french_agent(input: list[Message]) -> AsyncGenerator:
+llm = ChatModel.from_name("ollama:llama3.1:8b")
 
     agent = ReActAgent(llm=llm, tools=[], memory=TokenMemory(llm))
-    response = await agent.run(prompt="Translate the given text to French. The text is: " + str(inputs))
+    response = await agent.run(prompt="Translate the given text to French. The text is: " + str(input))
 
     yield MessagePart(content=response.result.text)
 
 @server.agent(name="router")
-async def main_agent(inputs: list[Message], context: Context) -> AsyncGenerator:
-    llm = ChatModel.from_name("ollama:llama3.1:8b")
-    
+async def main_agent(input: list[Message], context: Context) -> AsyncGenerator:
+llm = ChatModel.from_name("ollama:llama3.1:8b")
+
     agent = ReActAgent(
         llm=llm,
         tools=[TranslationTool()],
@@ -140,13 +153,14 @@ async def main_agent(inputs: list[Message], context: Context) -> AsyncGenerator:
         memory=TokenMemory(llm)
     )
 
-    prompt = (str(inputs[0]))
+    prompt = (str(input[0]))
     response = await agent.run(prompt)
 
     yield MessagePart(content=response.result.text)
 
 server.run()
-```
+
+````
 
 ```python translation_tool.py
 from pydantic import BaseModel, Field
@@ -165,10 +179,10 @@ from beeai_framework.utils.strings import to_json
 async def run_agent(agent: str, input: str) -> list[Message]:
     async with Client(base_url="http://localhost:8000") as client:
         run = await client.run_sync(
-            agent=agent, inputs=[Message(parts=[MessagePart(content=input, content_type="text/plain")])]
+            agent=agent, input=[Message(parts=[MessagePart(content=input, content_type="text/plain")])]
         )
 
-    return run.outputs
+    return run.output
 
 class Language(str, Enum):
     spanish = 'spanish'
@@ -186,7 +200,7 @@ class TranslateToolOutput(ToolOutput):
 
     def get_text_content(self) -> str:
         return to_json(self.result)
-    
+
     def is_empty(self) -> bool:
         return self.result.text == ""
 
@@ -215,15 +229,16 @@ class TranslationTool(Tool[TranslateToolInput, ToolRunOptions, TranslateToolOutp
             result = await run_agent("translation_french", input.text)
 
         return TranslateToolOutput(result=TranslateToolResult(text=str(result[0])))
-```
+````
 
 ```bash cURL
 curl -X POST http://localhost:8000/runs \
   -H "Content-Type: application/json" \
   -d '{
         "agent_name": "router",
-        "inputs": [
+        "input": [
           {
+            "role": "user",
             "parts": [
               {
                 "content_type": "text/plain",
@@ -234,9 +249,112 @@ curl -X POST http://localhost:8000/runs \
         ]
       }'
 ```
+
 </CodeGroup>
 
 Key points:
+
 - The `run_agent` function enables remote invocation of agents through ACP.
 - The router agent is provided with a `TranslationTool`, which can invoke both `translation_french` and `translation_spanish` agents via ACP by using `run_agent`.
 - Based on the user's input, the router decides which agent to invoke to fulfill the user's request.
+
+## Parallelization Example
+
+<Tip>
+  See the complete source code on
+  [GitHub](https://github.com/i-am-bee/acp/tree/main/examples/python/beeai-parallelization).
+</Tip>
+
+Parallelization executes multiple agents simultaneously to reduce overall processing time. Use this pattern when you need the same input processed by different agents or when tasks are independent.
+
+This example uses `asyncio.gather` to execute multiple remote agent calls concurrently via ACP. The process then awaits both responses, effectively blocking until all agents return their results.
+
+<CodeGroup>
+```python agent.py
+from collections.abc import AsyncGenerator
+
+from acp_sdk import Message
+from acp_sdk.client.client import Client
+from acp_sdk.models import MessagePart
+from acp_sdk.server import Context, Server
+from beeai_framework.agents.react import ReActAgent
+from beeai_framework.backend.chat import ChatModel
+from beeai_framework.memory import TokenMemory
+
+import asyncio
+
+server = Server()
+
+
+async def run_agent(agent: str, input: str) -> list[Message]:
+    async with Client(base_url="http://localhost:8000") as client:
+        run = await client.run_sync(
+            agent=agent, input=input
+        )
+
+    return run.output
+
+
+@server.agent()
+async def translation_spanish(input: list[Message]) -> AsyncGenerator:
+    llm = ChatModel.from_name("ollama:llama3.1:8b")
+
+    agent = ReActAgent(llm=llm, tools=[], memory=TokenMemory(llm))
+    response = await agent.run(
+        prompt="Translate the given English text to Spanish. Return only the translated text. The text is: "
+        + str(input)
+    )
+
+    yield MessagePart(content=response.result.text)
+
+
+@server.agent()
+async def translation_french(input: list[Message]) -> AsyncGenerator:
+    llm = ChatModel.from_name("ollama:llama3.1:8b")
+
+    agent = ReActAgent(llm=llm, tools=[], memory=TokenMemory(llm))
+    response = await agent.run(
+        prompt="Translate the given English text to French. Return only the translated text. The text is: " + str(input)
+    )
+
+    yield MessagePart(content=response.result.text)
+
+
+@server.agent()
+async def aggregator(input: list[Message], context: Context) -> AsyncGenerator:
+    spanish_result, english_result = await asyncio.gather(
+        run_agent("translation_spanish", str(input[0])), run_agent("translation_french", str(input[0]))
+    )
+
+    yield MessagePart(content=str(spanish_result[0]), language="Spanish")
+    yield MessagePart(content=str(english_result[0]), language="French")
+
+
+server.run()
+````
+
+```bash cURL
+curl -X POST http://localhost:8000/runs \
+  -H "Content-Type: application/json" \
+  -d '{
+        "agent_name": "aggregator",
+        "input": [
+          {
+            "role": "user",
+            "parts": [
+              {
+                "content_type": "text/plain",
+                "content": "Translate text \"Hello world\"."
+              }
+            ]
+          }
+        ]
+      }'
+```
+
+</CodeGroup>
+
+Key points:
+
+- The `run_agent` function enables remote invocation of agents through ACP.
+- The aggregator agent invokes both `translation_french` and `translation_spanish` in parallel using `asyncio.gather`

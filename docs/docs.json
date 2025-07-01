@@ -9,11 +9,26 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Python SDK",
+          "href": "https://github.com/i-am-bee/acp/tree/main/python",
+          "icon": "python"
+        },
+        {
+          "anchor": "TypeScript SDK",
+          "href": "https://github.com/i-am-bee/acp/tree/main/typescript",
+          "icon": "square-js"
+        }
+      ]
+    },
     "groups": [
       {
         "group": "Introduction",
         "pages": [
           "/introduction/welcome",
+          "/introduction/whats-new",
           "/introduction/quickstart",
           "/introduction/example-agents"
         ]
@@ -21,28 +36,32 @@
       {
         "group": "Core Concepts",
         "pages": [
-          "/core-concepts/agent-detail",
+          "/core-concepts/architecture",
+          "/core-concepts/agent-run-lifecycle",
+          "/core-concepts/agent-manifest",
           "/core-concepts/agent-discovery",
-          "/core-concepts/agent-lifecycle",
           "/core-concepts/message-structure",
+          "/core-concepts/message-metadata",
+          "/core-concepts/stateful-agents",
+          "/core-concepts/distributed-sessions",
+          "/core-concepts/errors",
           "/core-concepts/production-grade"
         ]
       },
       {
         "group": "How To",
-        "icon": "brackets-curly",
         "pages": [
           "/how-to/wrap-existing-agent",
           "/how-to/discover-and-run-agent",
           "/how-to/generate-artifacts",
           "/how-to/compose-agents",
           "/how-to/debug",
-          "/how-to/await-external-response"
+          "/how-to/await-external-response",
+          "/how-to/high-availability"
         ]
       },
       {
         "group": "REST API",
-        "icon": "brackets-curly",
         "pages": [
           "/spec/openapi",
           {
@@ -52,24 +71,18 @@
               "/spec/agents-get",
               "/spec/run-create",
               "/spec/run-get",
+              "/spec/run-get-events",
               "/spec/run-resume",
-              "/spec/run-cancel"
+              "/spec/run-cancel",
+              "/spec/sessions-get",
+              "/spec/ping"
             ]
           }
         ]
       },
       {
-        "group": "Python SDK",
-        "pages": [
-          {
-            "group": "Documentation",
-            "pages": [
-              "/python-sdk/server",
-              "/python-sdk/client",
-              "/python-sdk/models"
-            ]
-          }
-        ]
+        "group": "Integrations",
+        "pages": ["/integrations/mcp-adapter", "/integrations/cursor"]
       },
       {
         "group": "About",
@@ -81,6 +94,11 @@
         ]
       }
     ]
+  },
+  "api": {
+    "playground": {
+      "proxy": false
+    }
   },
   "navbar": {
     "primary": {
@@ -98,9 +116,15 @@
   "footer": {
     "socials": {
       "github": "https://github.com/i-am-bee/acp",
-      "discord": "https://discord.gg/AZFrp3UF5k",
+      "discord": "https://discord.gg/NradeA6ZNF",
       "bluesky": "https://bsky.app/profile/beeaiagents.bsky.social",
       "youtube": "https://www.youtube.com/@BeeAIAgents"
     }
-  }
+  },
+  "redirects": [
+    {
+      "source": "/ecosystem/mcp-adapter",
+      "destination": "/integrations/mcp-adapter"
+    }
+  ]
 }

@@ -1,3 +1,6 @@
+# Copyright 2025 © BeeAI a Series of LF Projects, LLC
+# SPDX-License-Identifier: Apache-2.0
+
 import asyncio
 from functools import reduce
 
@@ -17,22 +20,21 @@ async def example() -> None:
                     parts=[
                         MessagePart(
                             content="Hi, my name is Jon. I like apples. Can you tell me something about them?",
-                            role="user",
                         )
                     ]
                 )
             ],
         )
-        print(str(reduce(lambda x, y: x + y, run.outputs)))
+        print(str(reduce(lambda x, y: x + y, run.output)))
         run = await session.run_sync(
-            agent="chat_agent", input=[Message(parts=[MessagePart(content="What is my favourite fruit?", role="user")])]
+            agent="chat_agent", input=[Message(parts=[MessagePart(content="What is my favourite fruit?")])]
         )
-        print(str(reduce(lambda x, y: x + y, run.outputs)))
+        print(str(reduce(lambda x, y: x + y, run.output)))
         run = await session.run_sync(
             agent="chat_agent",
-            input=[Message(parts=[MessagePart(content="Update the revious answer with my name.", role="user")])],
+            input=[Message(parts=[MessagePart(content="Update the revious answer with my name.")])],
         )
-        print(str(reduce(lambda x, y: x + y, run.outputs)))
+        print(str(reduce(lambda x, y: x + y, run.output)))
 
 
 if __name__ == "__main__":

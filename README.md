@@ -1,39 +1,72 @@
 <h1 align="center">
   Agent Communication Protocol (ACP)
 </h1>
-<h3 align="center">Framework-agnostic agent communication. Unified by design.</h3>
 
 <div align="center">
 
-[![Apache 2.0](https://img.shields.io/badge/Apache%202.0-License-EA7826?style=flat-square&logo=apache&logoColor=white)](https://github.com/i-am-bee/beeai-framework?tab=Apache-2.0-1-ov-file#readme)
-[![Follow on Bluesky](https://img.shields.io/badge/Follow%20on%20Bluesky-0285FF?style=flat-square&logo=bluesky&logoColor=white)](https://bsky.app/profile/beeaiagents.bsky.social)
-[![Join our Discord](https://img.shields.io/badge/Join%20our%20Discord-7289DA?style=flat-square&logo=discord&logoColor=white)](https://discord.com/invite/NradeA6ZNF)
-[![LF AI & Data](https://img.shields.io/badge/LF%20AI%20%26%20Data-0072C6?style=flat-square&logo=linuxfoundation&logoColor=white)](https://lfaidata.foundation/projects/)
+[![PyPI - Version](https://img.shields.io/pypi/v/acp-sdk)](https://pypi.org/project/acp-sdk)
+[![NPM - Version](https://img.shields.io/npm/v/acp-sdk)](https://www.npmjs.com/package/acp-sdk)
+[![Apache License](https://img.shields.io/badge/license-Apache%202.0-blue)](https://github.com/i-am-bee/beeai-framework?tab=Apache-2.0-1-ov-file#readme)
+[![Follow on Bluesky](https://img.shields.io/badge/Bluesky-blue?logo=bluesky&logoColor=white)](https://bsky.app/profile/beeaiagents.bsky.social)
+[![Join our Discord](https://img.shields.io/badge/Discord-blue?logo=discord&logoColor=white)](https://discord.gg/NradeA6ZNF)
 
 </div>
 
-<p align="center">
-  <strong><a href="https://agentcommunicationprotocol.dev">Documentation</a></strong> •
-  <strong><a href="https://github.com/i-am-bee/acp/blob/main/docs/spec/openapi.yaml">OpenAPI Spec</a></strong> •
-  <strong><a href="https://github.com/i-am-bee/acp/blob/main/python">Python SDK</a></strong> •
-  <strong><a href="https://github.com/i-am-bee/acp/tree/main/examples">Examples</a></strong>
-</p>
-
 <br>
 
-The **Agent Communication Protocol (ACP)** is an open standard with open governance enabling  **seamless communication** between AI agents, regardless of their implementation details. In ACP, an **agent** is a software service that communicates through multimodal messages, primarily driven by natural language. The protocol is **agnostic** to how agents function internally, specifying only the **minimum assumptions** necessary for smooth interoperability. ACP defines a **standardized RESTful API** for managing and executing agents, supporting **synchronous**, **asynchronous**, and **streaming** interactions.
+**ACP is an open protocol for communication between AI agents, applications, and humans.**
 
-## Core Components
+Modern AI agents are often built in isolation, across different frameworks, teams, and infrastructures.
+This fragmentation slows innovation and makes it harder for agents to work together effectively.
+ACP solves this by enabling agents to communicate and coordinate using multimodal messages.
 
-| **Concept**      | **Description** |
-|------------------|-----------------|
-| **Agent Detail** | **Agent Detail** refers to the metadata that describes an **agent**, including its **name**, **description**, and defined set of **functions** or **behaviors**. It is used in the capability-based model for discovery and communication, allowing other components to understand what an agent can do without accessing its implementation. This metadata enables agents to be found, invoked, and composed into larger systems through their well-defined behaviors. |
-| **ACP Server**   | The **ACP Server** is the server-side component that exposes agents through a **REST API**. It consists of an **agent interface**, a **FastAPI app factory**, and a **Uvicorn-based server**. Users can either use the full stack for development or integrate their own **ASGI server** for production environments. |
-| **ACP Client**   | The **ACP Client** is a lightweight, **httpx-based client** that supports session management. It provides features like session support via **context managers**, the ability to handle simple requests, maintain persistent sessions, and support **streaming responses**. It is designed to closely mirror the **REST API** for ease of use. |
-| **Run**          | A **Run** represents a single execution of an agent with specific **inputs**. It can be executed synchronously using **`run_sync`**, or asynchronously in streams using **`run_stream`**, providing flexibility in how agents are invoked and how results are consumed. A run can also produce **intermediate thoughts** and **final outputs**. |
-| **Message**      | A **Message** is the primary data structure for communication between agents and clients. Each message contains one or more **MessageParts** and is associated with a role (e.g., **"user"** or **"assistant"**) to define the perspective of the content. Messages are used to pass information in an agent-to-agent or agent-to-client context. |
-| **MessagePart**  | A **MessagePart** is a granular unit of content within a message. Each part has **content** and an optional **role**. It supports various content types, such as **text**, **JSON**, etc. Multiple **MessageParts** are combined to form a complete message that conveys structured information. |
-| **Await**        | **Await** is a mechanism that allows agents to pause execution and request additional information from the client before continuing. This creates interactive, **stateful conversations** where agents can ask for clarification or further data as needed. It is implemented using **`MessageAwaitRequest`** and **`MessageAwaitResume`** objects. |
+ACP enables agents to:
+- Send and receive rich messages — like text, code, files, or media
+- Respond in real time, in the background, or as a stream
+- Let others discover what they can do
+- Collaborate on long-running tasks
+- Share state with each other when needed
+
+ACP powers agent communication on the [BeeAI Platform](https://github.com/i-am-bee/beeai-platform) — a place where you can discover, run, and share agents.
+
+## Learn ACP
+
+Take the hands-on introduction to ACP in this [DeepLearning.AI short course](https://www.deeplearning.ai/short-courses/acp-agent-communication-protocol/):
+
+<div align="center">
+<a href="https://www.deeplearning.ai/short-courses/acp-agent-communication-protocol/">
+  <img src="docs/images/deeplearning-ai-cover.png" alt="Deep Learning AI Course" width="500">
+</a>
+</div>
+
+## What's New
+
+- **🌐 [Distributed Sessions](https://agentcommunicationprotocol.dev/core-concepts/distributed-sessions)** - Session continuity across multiple server instances using URI-based resource sharing
+- **🔍 [RAG LlamaIndex Agent](https://github.com/i-am-bee/acp/tree/main/examples/python/llama-index-rag)** - New example agent demonstrating Retrieval-Augmented Generation with LlamaIndex
+- **📚 [Citation Metadata](https://agentcommunicationprotocol.dev/core-concepts/message-structure)** - Enhanced MessagePart with CitationMetadata for improved source tracking and attribution
+- **⚡ [High Availability Support](https://agentcommunicationprotocol.dev/how-to/high-availability)** - Deploy ACP servers with centralized storage (Redis/PostgreSQL) for scalable, fault-tolerant setups
+- **📝 [Message Role Parameter](https://agentcommunicationprotocol.dev/core-concepts/message-structure)** - Added `role` parameter to Message structure for better agent identification
+- **🔄 [TypeScript SDK (Client)](https://github.com/i-am-bee/acp/tree/main/typescript)** - Full TypeScript client library for interacting with ACP agents
+
+## ACP Toolkit
+
+- **📚 [Documentation](https://agentcommunicationprotocol.dev)**. Comprehensive guides and reference material for implementing and using ACP.
+- **📝 [OpenAPI Specification](https://github.com/i-am-bee/acp/blob/main/docs/spec/openapi.yaml).** Defines the REST API endpoints, request/response formats, and data models to form the ACP protocol.
+- **🛠️ [Python SDK](https://github.com/i-am-bee/acp/blob/main/python).** Contains a server implementation, client libraries, and model definitions to easily create and interact with ACP agents.
+- **🛠️ [TypeScript SDK](https://github.com/i-am-bee/acp/blob/main/typescript).** Contains client libraries and model definitions to easily interact with ACP agents.
+- **💻 [Examples](https://github.com/i-am-bee/acp/tree/main/examples).** Ready-to-run code samples demonstrating how to build agents and clients that communicate using ACP.
+
+## Core Concepts
+
+| **Concept**      | **Description**  |
+| ---------------- | -------------------------------------------------------------------------------------------- |
+| **[Agent Manifest](https://agentcommunicationprotocol.dev/core-concepts/agent-manifest)** | A model describing an agent's capabilities—its name, description, and optional metadata and status—for discovery and composition without exposing implementation details. |
+| **[Run](https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle)** | A single agent execution with specific inputs. Supports sync or streaming, with intermediate and final output. |
+| **[Message](https://agentcommunicationprotocol.dev/core-concepts/message-structure)** | The core structure for communication, consisting of a sequence of ordered components that form a complete, structured, and multi-modal exchange of information. |
+| **[MessagePart](https://agentcommunicationprotocol.dev/core-concepts/message-structure)**  | The individual content units within a `Message`, which can include types like text, image, or JSON. Together, they combine to create structured, multimodal communication. |
+| **[Await](https://agentcommunicationprotocol.dev/core-concepts/agent-run-lifecycle#agent-run-await)**  | Let agents pause to request information from the client and resume, enabling interactive exchanges where the agent can wait for external input (data, actions, etc.) before continuing. |
+| **[Sessions](https://agentcommunicationprotocol.dev/core-concepts/stateful-agents)**  | Enable agents to maintain state and conversation history across multiple interactions using session identifiers. The SDK automatically manages session state, allowing agents to access complete interaction history within a session. |
+---
 
 ## Quickstart
 
@@ -43,7 +76,8 @@ The **Agent Communication Protocol (ACP)** is an open standard with open governa
 **1. Initialize your project**
 
 ```sh
-uv init --python '>=3.11'
+uv init --python '>=3.11' my_acp_project
+cd my_acp_project
 ```
 
 **2. Add the ACP SDK**
@@ -54,7 +88,8 @@ uv add acp-sdk
 
 **3. Create an agent**
 
-Let’s create a simple "echo agent" that returns any message it receives.
+Let's create a simple "echo agent" that returns any message it receives.  
+Create an `agent.py` file in your project directory with the following code:
 
 ```python
 # agent.py
@@ -69,10 +104,10 @@ server = Server()
 
 @server.agent()
 async def echo(
-    inputs: list[Message], context: Context
+    input: list[Message], context: Context
 ) -> AsyncGenerator[RunYield, RunYieldResume]:
     """Echoes everything"""
-    for message in inputs:
+    for message in input:
         await asyncio.sleep(0.5)
         yield {"thought": "I should echo everything"}
         await asyncio.sleep(0.5)
@@ -88,16 +123,18 @@ server.run()
 uv run agent.py
 ```
 
-Your server should now be running at `http://localhost:8000`.
+Your server should now be running at http://localhost:8000.
 
 **5. Verify your agent is available**
 
-*Request:*
+In another terminal, run the following `curl` command:
+
 ```sh
 curl http://localhost:8000/agents
 ```
 
-*Response:*
+You should see a JSON response containing your `echo` agent, confirming it's available:
+
 ```json
 {
   "agents": [
@@ -106,18 +143,18 @@ curl http://localhost:8000/agents
 }
 ```
 
-You should see a JSON response containing your `echo` agent, confirming it's available.
-
 **6. Run the agent via HTTP**
 
-*Request:*
+Run the following `curl` command:
+
 ```sh
 curl -X POST http://localhost:8000/runs \
   -H "Content-Type: application/json" \
   -d '{
         "agent_name": "echo",
-        "inputs": [
+        "input": [
           {
+            "role": "user",
             "parts": [
               {
                 "content": "Howdy!",
@@ -129,7 +166,8 @@ curl -X POST http://localhost:8000/runs \
       }'
 ```
 
-*Response:*
+Your response should include the echoed message "Howdy!":
+
 ```json
 {
   "run_id": "44e480d6-9a3e-4e35-8a03-faa759e19588",
@@ -137,8 +175,9 @@ curl -X POST http://localhost:8000/runs \
   "session_id": "b30b1946-6010-4974-bd35-89a2bb0ce844",
   "status": "completed",
   "await_request": null,
-  "outputs": [
+  "output": [
     {
+      "role": "agent/echo",
       "parts": [
         {
           "name": null,
@@ -154,11 +193,10 @@ curl -X POST http://localhost:8000/runs \
 }
 ```
 
-Your response should include the echoed message "Howdy!".
-
 **7. Build an ACP client**
 
-Here’s a simple ACP client to interact with your `echo` agent:
+Here's a simple ACP client to interact with your `echo` agent.  
+Create a `client.py` file in your project directory with the following code:
 
 ```python
 # client.py
@@ -172,13 +210,13 @@ async def example() -> None:
     async with Client(base_url="http://localhost:8000") as client:
         run = await client.run_sync(
             agent="echo",
-            inputs=[
+            input=[
                 Message(
-                    parts=[MessagePart(content="Howdy!", content_type="text/plain")]
+                    parts=[MessagePart(content="Howdy to echo from client!!", content_type="text/plain")]
                 )
             ],
         )
-        print(run.outputs)
+        print(run.output)
 
 
 if __name__ == "__main__":
@@ -193,9 +231,11 @@ uv run client.py
 
 You should see the echoed response printed to your console. 🎉
 
+---
+
 ## Contributors
 
-We are grateful for the efforts of our initial contributors, who have played a vital role in getting ACP of the ground. As we continue to grow and evolve, we invite others to join our vibrant community and contribute to our project’s ongoing development. For more information, please visit the [Contribute](https://agentcommunicationprotocol.dev/about/contribute) page of our documentation.
+We are grateful for the efforts of our initial contributors, who have played a vital role in getting ACP off the ground. As we continue to grow and evolve, we invite others to join our vibrant community and contribute to our project's ongoing development. For more information, please visit the [Contribute](https://agentcommunicationprotocol.dev/about/contribute) page of our documentation.
 
 ![Contributors list](https://contrib.rocks/image?repo=i-am-bee/acp)
 
